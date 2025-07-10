@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"myapp/config"
+	"myapp/dto"
 	"myapp/models"
 	"net/http"
 	"strconv"
@@ -20,17 +21,26 @@ func (c *RoleController) RoleIndex(ctx echo.Context) error {
 	if err := config.DB.Preload("Permissions").Find(&roles).Error; err != nil {
 		return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "Failed to fetch roles"})
 	}
-	return ctx.JSON(http.StatusOK, roles)
+
+	var response []dto.RoleResponse
+	for _, r := range roles {
+		response = append(response, dto.ToRoleResponse(r))
+	}
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func (c *RoleController) RoleShow(ctx echo.Context) error {
 	id, _ := strconv.Atoi(ctx.Param("id"))
+
 	var role models.Role
-	result := config.DB.First(&role, id)
+
+	result := config.DB.Preload("Permissions").First(&role, id)
 	if result.Error != nil {
 		return ctx.JSON(http.StatusNotFound, echo.Map{"error": "Role not found"})
 	}
-	return ctx.JSON(http.StatusOK, role)
+	response := dto.ToRoleResponse(role)
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func (c *RoleController) RoleCreate(ctx echo.Context) error {
