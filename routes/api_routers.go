@@ -23,6 +23,8 @@ func RegisterRoutes(e *echo.Echo) {
 		category.POST("", CategoryController.CategoryStore)
 		category.PUT("/:id", CategoryController.CategoryUpdate)
 		category.DELETE("/:id", CategoryController.CategoryDelete)
+		category.GET("/active/:id/:id", CategoryController.CategoryShow)
+		category.POST("/category/:id/edit/:id", CategoryController.CategoryShow)
 	}
 
 	product := api1.Group("/product")

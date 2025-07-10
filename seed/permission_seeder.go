@@ -90,22 +90,33 @@ func SeedPermissions(db *gorm.DB, e *echo.Echo) {
 }
 
 func generatePermissionName(method, path string) string {
-	entity := strings.Split(path, "/")
-	if len(entity) > 3 {
-		entityName := strings.Title(entity[3])
+	parts := strings.Split(path, "/")
+
+	// Kamida /api/v1/entity/action
+	if len(parts) > 3 {
+		entity := strings.Title(parts[3])
+
+		// Custom action bo'lishi mumkin
+		if len(parts) > 4 {
+			action := strings.Title(parts[4])
+			return entity + " " + action + " " + method
+		}
+
 		switch method {
 		case "GET":
 			if strings.Contains(path, ":id") {
-				return entityName + " View"
+				return entity + " View"
 			}
-			return entityName + " List"
+			return entity + " List"
 		case "POST":
-			return entityName + " Create"
+			return entity + " Create"
 		case "PUT", "PATCH":
-			return entityName + " Update"
+			return entity + " Update"
 		case "DELETE":
-			return entityName + " Delete"
+			return entity + " Delete"
 		}
 	}
+
+	// Fallback – to'liq pathni qaytaramiz
 	return method + " " + path
 }
