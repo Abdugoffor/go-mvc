@@ -12,6 +12,7 @@ func RegisterRoutes(e *echo.Echo) {
 	ProductController := controllers.NewProductController()
 	OrderController := controllers.NewOrderController()
 	PermissionController := controllers.NewPermissionController()
+	RoleController := controllers.NewRoleController()
 
 	api1 := e.Group("/api/v1")
 
@@ -49,6 +50,15 @@ func RegisterRoutes(e *echo.Echo) {
 		permission.PUT("/:id", PermissionController.PermissionUpdate)
 		// permission.POST("", PermissionController.PermissionStore)
 		// permission.DELETE("/:id", PermissionController.PermissionDelete)
+	}
+
+	role := api1.Group("/role")
+	{
+		role.GET("", RoleController.RoleIndex)
+		role.GET("/:id", RoleController.RoleShow)
+		role.POST("", RoleController.RoleCreate)
+		role.PUT("/:id", RoleController.RoleUpdate)
+		role.DELETE("/:id", RoleController.RoleDelete)
 	}
 
 	api1.GET("/ping", func(c echo.Context) error {
